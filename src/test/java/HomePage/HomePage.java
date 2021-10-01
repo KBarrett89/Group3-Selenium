@@ -44,7 +44,7 @@ public class HomePage {
 	
 	public String getExpiredSessionTitle(WebDriverWait wait) {
 		wait.until(ExpectedConditions.elementToBeClickable(this.SessionExpiredOk));
-		wait.until(ExpectedConditions.textToBePresentInElement(this.SessionExpiredTitle, "Invalid Search"));
+		wait.until(ExpectedConditions.textToBePresentInElement(this.SessionExpiredTitle, "Session Expired"));
 		return SessionExpiredTitle.getText();
 	}
 	
