@@ -1,4 +1,4 @@
-package HomePage;
+package Dashboard;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -9,19 +9,20 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import HomePage.HomePage;
 import Login.LoginPage;
 import shared.SharedFunctions;
 
-public class HomeTest {
-
+public class DashboardTest {
+	
 	private RemoteWebDriver driver;
 	private WebDriverWait wait;
 	private ChromeOptions options;
 	private LoginPage loginPage = new LoginPage();
 	private HomePage homePage = new HomePage();
+	private DashboardPage dashboardPage = new DashboardPage();
 	private SharedFunctions sharedFunctions = new SharedFunctions();
 	
 	@BeforeEach
@@ -33,33 +34,35 @@ public class HomeTest {
 
 		PageFactory.initElements(this.driver, loginPage);
 		PageFactory.initElements(this.driver, homePage);
+		PageFactory.initElements(this.driver, dashboardPage);
 		this.wait = new WebDriverWait(driver, 5);
 		
 		sharedFunctions.navigateToUrl(driver);
 		loginPage.loginToSite("admin", "admin", wait);
-	}
-	
-	@Test 
-	void GoToSecureSearchButton() {
-		this.wait.until(ExpectedConditions.elementToBeClickable(this.homePage.GoToSecureSerch));
-		assertEquals("BAE12 Final Project\nGo To Secure Search", homePage.getWelcomeMessage());
 		homePage.clickGoToSearch(wait);
 	}
 	
-	@Test
-	void LogoutFromHomePage() {
-		this.wait.until(ExpectedConditions.elementToBeClickable(this.homePage.GoToSecureSerch));
-		assertEquals("BAE12 Final Project\nGo To Secure Search", homePage.getWelcomeMessage());
-		this.homePage.clickLogoutButton();
-		assertEquals(this.loginPage.redirectedUrl, driver.getCurrentUrl());
+	@Test 
+	void enterInvalidPlate() {
+		assertEquals(this.dashboardPage.Url, this.driver.getCurrentUrl());
+		this.dashboardPage.waitForPage(wait);
+		this.dashboardPage.searchForReg("invalid");
+		this.dashboardPage.getInvalidSearchTitle(wait);
+		this.dashboardPage.clickInvalidSearchOk();
+	}
+	
+	@Test 
+	void enterValidPlate() {
+		assertEquals(this.dashboardPage.Url, this.driver.getCurrentUrl());
+		this.dashboardPage.waitForPage(wait);
+		this.dashboardPage.searchForReg("JA15 FXK");
 	}
 	
 	@Test
-	void TestTokenExpires() throws InterruptedException {
-		Thread.sleep(180000);
-		this.homePage.clickGoToSearch();
-		assertEquals("Session Expired", homePage.getExpiredSessionTitle(wait));
-		homePage.clickSessionExpiredOk();
+	void clickLogoutButton() {
+		assertEquals(this.dashboardPage.Url, this.driver.getCurrentUrl());
+		this.dashboardPage.waitForPage(wait);
+		this.dashboardPage.clickLogoutButton();
 		assertEquals(this.loginPage.redirectedUrl, driver.getCurrentUrl());
 	}
 	
